@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Hair & Care</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+      <link rel="stylesheet" href="styles.css">
+      <!-- Facebook Pixel Code -->
+      <script>
+         !function(f,b,e,v,n,t,s)
+         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+         n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+         if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+         n.queue=[];t=b.createElement(e);t.async=!0;
+         t.src=v;s=b.getElementsByTagName(e)[0];
+         s.parentNode.insertBefore(t,s)}(window,document,'script',
+         'https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', '1073548180094769');
+         fbq('track', 'PageView');
+      </script>
+      <noscript>
+         <img height="1" width="1"
+            src="https://www.facebook.com/tr?id=1073548180094769&ev=PageView
+            &noscript=1"/>
+      </noscript>
+      <!-- End Facebook Pixel Code -->
+   </head>
+   <body>
+      <main>
+         <div class="container-fluid">
+            <div class="row justify-content-center">
+               <div class="col-sm-10">
+                  <div class="quiz-container shadow-sm p-3 mb-5 rounded">
+                     <div id="quiz-container"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </main>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+      <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+      <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+      <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+      <script type="text/babel">
+         const WelcomeForm = ({setQuizStatus}) => {
+
+           const [email, setEmail] = React.useState('');
+
+           const handleEmailChange = (e) => {
+             const val = e.target.value.trim();
+             if(val) {
+               setEmail(e.target.value);
+             }
+           }
+
+           const startAnalysis = () => {
+             const constraints = {
+               from: {
+                 email: true
+               }
+             };
+
+             const validation = validate({from: email}, constraints);
+
+             if(validation) {
+                 alert('Please Enter a valid Email ID!');
+             } else {
+               setQuizStatus(true);
+               fbq('track', 'Lead');
+             }
+           }
+
+           return (
+             <div>
+               <div className="row justify-content-center">
+                 <div className="col-sm-12 quiz-wizard">
+                   <h3>Welcome</h3>
+                   <p>Answer a few questions & get a picture of your hairs current health and requirements.</p>
+                 </div>
+               </div>
+               <div className="row justify-content-center">
+                 <div className="col-sm-6 welcome-form">
+                   <div className="mb-3">
+                     <label htmlFor="exampleInputEmail1" className="form-label">Where should we send your results??</label>
+                     <input type="email" className="form-control" placeholder="Enter Your Email" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={handleEmailChange}/>
+                     <div id="emailHelp" className="form-text">We require your email to send you the analysis report.<br/> We respect your privacy.</div>
+                   </div>
+                 </div>
+               </div>
+               <div className="row justify-content-center">
+                   <div className="col-sm-6 welcome-form">
+                     <button type="button" className="btn btn-danger btn-lg" onClick={startAnalysis}>Start My Analysis</button>
+                   </div>
+               </div>
+             </div>
+           );
+         }
+
+         const QuizQuestion = ({data, visiblity, handleNext, handlePrev, diablePrevButton}) => {
+
+             const [answer, setAnswer] = React.useState('');
+             const [isError, setError] = React.useState(false);
+
+             const handleAnswerClick = (ans) => {
+               setAnswer(ans);
+               setError(false);
+             }
+
+             const onClickNext = () => {
+               if(answer) {
+                 handleNext();
+               } else {
+                 setError(true);
+               }
+             }
+
+             return (
+               <div style={{display: visiblity ? 'block': 'none'}}>
+                   <div className="row">
+                       <div className="col-sm-12 quiz-wizard">
+                           <h4>{data.question}</h4>
+                           <p>{data.desc}</p>
+                           {isError && <p className="text-danger">Please answer the question.</p>}
+                       </div>
+                   </div>
+                   <div className="row justify-content-center">
+                       <div className="col-3 welcome-form">
+                         <button type="button" className="btn btn-danger" onClick={handlePrev} disabled={diablePrevButton}>Prev</button>
+                       </div>
+                       <div className="col-6">
+                           <div className="row justify-content-center">
+                               {data.options.map((item, index) => {
+                                 return (
+                                   <div className="col-sm-12 welcome-form" key={item}>
+                                       <button
+                                         type="button"
+                                         className={`btn ${answer === item ? 'btn-info' : 'btn-outline-secondary'} same-width`}
+                                         onClick={() => handleAnswerClick(item)}>
+                                         {item}
+                                       </button>
+                                   </div>
+                                 );
+                               })}
+                           </div>
+                       </div>
+                       <div className="col-3  welcome-form">
+                         <button type="button" className="btn btn-danger" onClick={onClickNext}>Next</button>
+                       </div>
+                   </div>
+               </div>
+             );
+         }
+
+         const QuizWizard = () => {
+
+             const [active, setActive] = React.useState(0);
+             const [progress, setProgress] = React.useState(0);
+             const [loading, setLoading] = React.useState(true);
+
+             const questions = [
+               {
+                 question: "What is your hair type?",
+                 desc: "",
+                 options: ["Straight", "Wavy", "Curly"]
+               },
+               {
+                 question: "What is the thickness of your hair?",
+                 desc: "",
+                 options: ["Thin", "Normal", "Thick"]
+               },
+               {
+                 question: "What is your hair volume?",
+                 desc: "",
+                 options: ["Low Volume", "Moderate Volume", "I have Voluminous Hair"]
+               },
+               {
+                 question: "If you shampoo in the morning, how does your hair feel the same night?",
+                 desc: "",
+                 options: ["Oily", "Very Oily", "Dry", "Very Dry", "Neither Oily Nor Dry"]
+               },
+               {
+                 question: "How much hair do you lose every time you brush your hair?",
+                 desc: "",
+                 options: ["A Few Hair Strands", "A Dozen Hair Strands", "More Than A Dozen Hair Strands"]
+               },
+               {
+                 question: "Have you taken any medications over the last year whereby you noticed an increase in hair fall?",
+                 desc: "",
+                 options: ["No", "I'm Not Sure", "Yes"]
+               },
+               {
+                 question: "Do you currently have dandruff?",
+                 desc: "",
+                 options: ["Yes", "no"]
+               },
+               {
+                 question: "Have you consulted a Dermatologist for any existing scalp condition in the last 3 months? (ex: Scalp Psoriasis, Alopecia, Folliculitis, etc.)",
+                 desc: "",
+                 options: ["Yes", "no"]
+               },
+               {
+                 question: "On a daily basis, would you say your hair is...",
+                 desc: "",
+                 options: ["Not Very Exposed To Sunlight & Pollution", "Somewhat Exposed To Sunlight & Pollution", "Very Exposed To Sunlight & Pollution"]
+               }
+             ];
+
+             const quizComplete = () => {
+               setProgress(100);
+               setTimeout(() => {
+                 setLoading(false)
+               }, 2000)
+             }
+
+             const handleNext = () => {
+               if(active < (questions.length - 1)) {
+                 const next = active + 1;
+                 setActive(next);
+               } else {
+                 quizComplete();
+               }
+             }
+
+             const handlePrev = () => {
+               const prev = active - 1;
+               setActive(prev);
+             }
+
+             const calcProgress = () => {
+                 const p = (active * 100)/ questions.length;
+                 setProgress(p);
+             }
+
+             React.useEffect(() => {
+               calcProgress();
+             }, [active]);
+
+             return (
+               <div>
+                 <div className="row justify-content-center">
+                     <div className="col-sm-6 quiz-wizard">
+                       <div className="progress">
+                         <div className="progress-bar bg-info" role="progressbar" style={{width: `${progress}%`}} aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100">{Math.floor(progress)}%</div>
+                       </div>
+                     </div>
+                 </div>
+
+                 {progress !== 100 &&
+                   questions.map((item, index) => {
+                     return(
+                       <QuizQuestion
+                         data={item}
+                         key={item.question}
+                         visiblity={active === index}
+                         diablePrevButton={active < 1}
+                         handlePrev={handlePrev}
+                         handleNext={handleNext} />
+                     );
+                   })
+                 }
+
+                 {progress === 100 &&
+                   <div>
+                     {loading ?
+                       <div className="row justify-content-center">
+                           <div className="col-sm-6 quiz-wizard">
+                             <div className="spinner-border text-info" role="status">
+                               <span className="visually-hidden">Loading...</span>
+                             </div>
+                           </div>
+                       </div>
+                       :
+                       <div>
+                         <div className="row justify-content-center">
+                             <div className="col-sm-6 quiz-wizard">
+                               <div className="alert alert-success" role="alert">
+                                 CONGRATULATIONS...! You have completed the test. We are reviewing your details and will be mailing you the final report.
+                               </div>
+                             </div>
+                         </div>
+                         <div className="row justify-content-center">
+                             <div className="col-sm-6">
+                               <div className="welcome-form">
+                                 <p>Based on your answers, we have found a <a href="http://paisaapps.dvnlocks.hop.clickbank.net/?tid=facebook" className="link-danger">SOLUTION</a> for your hair problems. Cick on the button below.</p>
+                                 <a href="http://paisaapps.dvnlocks.hop.clickbank.net/?tid=facebook" className="btn btn-danger btn-lg">Show Me The Solution</a>
+                               </div>
+                             </div>
+                         </div>
+                       </div>
+                     }
+                   </div>
+                 }
+               </div>
+             );
+         }
+
+         const AppHome = () => {
+
+           const [quizStatus, setQuizStatus] = React.useState(false);
+
+           return (
+             <div>
+               <div className="row justify-content-center">
+                 <div className="col-sm-8">
+                   <div className="heading-banner"></div>
+                 </div>
+               </div>
+               {quizStatus ? <QuizWizard /> : <WelcomeForm setQuizStatus={setQuizStatus} />}
+               <div className="row justify-content-center">
+                 <div className="col-sm-8 quiz-wizard">
+                   <p className="font-small">Powered by ProductDais</p>
+                 </div>
+               </div>
+             </div>
+           );
+         }
+
+         const domContainer = document.querySelector('#quiz-container');
+         ReactDOM.render(<AppHome />, domContainer);
+      </script>
+   </body>
+</html>
